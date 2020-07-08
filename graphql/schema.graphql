@@ -4,21 +4,6 @@ schema {
   subscription: subscription_root
 }
 
-scalar bigint
-
-# expression to compare columns of type bigint. All fields are combined with logical 'AND'.
-input bigint_comparison_exp {
-  _eq: bigint
-  _gt: bigint
-  _gte: bigint
-  _in: [bigint!]
-  _is_null: Boolean
-  _lt: bigint
-  _lte: bigint
-  _neq: bigint
-  _nin: [bigint!]
-}
-
 # mutation root
 type mutation_root {
   # delete data from the table: "urls"
@@ -28,7 +13,7 @@ type mutation_root {
   ): urls_mutation_response
 
   # delete single row from the table: "urls"
-  delete_urls_by_pk(id: bigint!): urls
+  delete_urls_by_pk(id: uuid!): urls
 
   # insert data into the table: "urls"
   insert_urls(
@@ -50,9 +35,6 @@ type mutation_root {
 
   # update data of the table: "urls"
   update_urls(
-    # increments the integer columns with given value of the filtered values
-    _inc: urls_inc_input
-
     # sets the columns of the filtered rows to the given values
     _set: urls_set_input
 
@@ -62,9 +44,6 @@ type mutation_root {
 
   # update single row of the table: "urls"
   update_urls_by_pk(
-    # increments the integer columns with given value of the filtered values
-    _inc: urls_inc_input
-
     # sets the columns of the filtered rows to the given values
     _set: urls_set_input
     pk_columns: urls_pk_columns_input!
@@ -131,26 +110,26 @@ type query_root {
   ): urls_aggregate!
 
   # fetch data from the table: "urls" using primary key columns
-  urls_by_pk(id: bigint!): urls
+  urls_by_pk(id: uuid!): urls
 }
 
 # expression to compare columns of type String. All fields are combined with logical 'AND'.
 input String_comparison_exp {
   _eq: String
-  _gt: String
-  _gte: String
-  _ilike: String
-  _in: [String!]
-  _is_null: Boolean
-  _like: String
-  _lt: String
-  _lte: String
-  _neq: String
-  _nilike: String
-  _nin: [String!]
-  _nlike: String
-  _nsimilar: String
-  _similar: String
+  # _gt: String
+  # _gte: String
+  # _ilike: String
+  # _in: [String!]
+  # _is_null: Boolean
+  # _like: String
+  # _lt: String
+  # _lte: String
+  # _neq: String
+  # _nilike: String
+  # _nin: [String!]
+  # _nlike: String
+  # _nsimilar: String
+  # _similar: String
 }
 
 # subscription root
@@ -192,7 +171,7 @@ type subscription_root {
   ): urls_aggregate!
 
   # fetch data from the table: "urls" using primary key columns
-  urls_by_pk(id: bigint!): urls
+  urls_by_pk(id: uuid!): urls
 }
 
 scalar timestamptz
@@ -210,14 +189,14 @@ input timestamptz_comparison_exp {
   _nin: [timestamptz!]
 }
 
-# each url entry
+# a shortened url
 #
 #
 # columns and relationships of "urls"
 #
 type urls {
   created_at: timestamptz!
-  id: bigint!
+  id: uuid!
   long: String!
   short: String!
 }
@@ -230,32 +209,16 @@ type urls_aggregate {
 
 # aggregate fields of "urls"
 type urls_aggregate_fields {
-  avg: urls_avg_fields
   count(columns: [urls_select_column!], distinct: Boolean): Int
   max: urls_max_fields
   min: urls_min_fields
-  stddev: urls_stddev_fields
-  stddev_pop: urls_stddev_pop_fields
-  stddev_samp: urls_stddev_samp_fields
-  sum: urls_sum_fields
-  var_pop: urls_var_pop_fields
-  var_samp: urls_var_samp_fields
-  variance: urls_variance_fields
 }
 
 # order by aggregate values of table "urls"
 input urls_aggregate_order_by {
-  avg: urls_avg_order_by
   count: order_by
   max: urls_max_order_by
   min: urls_min_order_by
-  stddev: urls_stddev_order_by
-  stddev_pop: urls_stddev_pop_order_by
-  stddev_samp: urls_stddev_samp_order_by
-  sum: urls_sum_order_by
-  var_pop: urls_var_pop_order_by
-  var_samp: urls_var_samp_order_by
-  variance: urls_variance_order_by
 }
 
 # input type for inserting array relation for remote table "urls"
@@ -264,23 +227,13 @@ input urls_arr_rel_insert_input {
   on_conflict: urls_on_conflict
 }
 
-# aggregate avg on columns
-type urls_avg_fields {
-  id: Float
-}
-
-# order by avg() on columns of table "urls"
-input urls_avg_order_by {
-  id: order_by
-}
-
 # Boolean expression to filter rows from the table "urls". All fields are combined with a logical 'AND'.
 input urls_bool_exp {
   _and: [urls_bool_exp]
   _not: urls_bool_exp
   _or: [urls_bool_exp]
   created_at: timestamptz_comparison_exp
-  id: bigint_comparison_exp
+  id: uuid_comparison_exp
   long: String_comparison_exp
   short: String_comparison_exp
 }
@@ -294,15 +247,10 @@ enum urls_constraint {
   urls_short_key
 }
 
-# input type for incrementing integer column in table "urls"
-input urls_inc_input {
-  id: bigint
-}
-
 # input type for inserting data into table "urls"
 input urls_insert_input {
   created_at: timestamptz
-  id: bigint
+  id: uuid
   long: String
   short: String
 }
@@ -310,7 +258,7 @@ input urls_insert_input {
 # aggregate max on columns
 type urls_max_fields {
   created_at: timestamptz
-  id: bigint
+  id: uuid
   long: String
   short: String
 }
@@ -326,7 +274,7 @@ input urls_max_order_by {
 # aggregate min on columns
 type urls_min_fields {
   created_at: timestamptz
-  id: bigint
+  id: uuid
   long: String
   short: String
 }
@@ -371,7 +319,7 @@ input urls_order_by {
 
 # primary key columns input for table: "urls"
 input urls_pk_columns_input {
-  id: bigint!
+  id: uuid!
 }
 
 # select columns of table "urls"
@@ -392,49 +340,9 @@ enum urls_select_column {
 # input type for updating data in table "urls"
 input urls_set_input {
   created_at: timestamptz
-  id: bigint
+  id: uuid
   long: String
   short: String
-}
-
-# aggregate stddev on columns
-type urls_stddev_fields {
-  id: Float
-}
-
-# order by stddev() on columns of table "urls"
-input urls_stddev_order_by {
-  id: order_by
-}
-
-# aggregate stddev_pop on columns
-type urls_stddev_pop_fields {
-  id: Float
-}
-
-# order by stddev_pop() on columns of table "urls"
-input urls_stddev_pop_order_by {
-  id: order_by
-}
-
-# aggregate stddev_samp on columns
-type urls_stddev_samp_fields {
-  id: Float
-}
-
-# order by stddev_samp() on columns of table "urls"
-input urls_stddev_samp_order_by {
-  id: order_by
-}
-
-# aggregate sum on columns
-type urls_sum_fields {
-  id: bigint
-}
-
-# order by sum() on columns of table "urls"
-input urls_sum_order_by {
-  id: order_by
 }
 
 # update columns of table "urls"
@@ -452,54 +360,18 @@ enum urls_update_column {
   short
 }
 
-# aggregate var_pop on columns
-type urls_var_pop_fields {
-  id: Float
+scalar uuid
+
+# expression to compare columns of type uuid. All fields are combined with logical 'AND'.
+input uuid_comparison_exp {
+  _eq: uuid
+  _gt: uuid
+  _gte: uuid
+  _in: [uuid!]
+  _is_null: Boolean
+  _lt: uuid
+  _lte: uuid
+  _neq: uuid
+  _nin: [uuid!]
 }
 
-# order by var_pop() on columns of table "urls"
-input urls_var_pop_order_by {
-  id: order_by
-}
-
-# aggregate var_samp on columns
-type urls_var_samp_fields {
-  id: Float
-}
-
-# order by var_samp() on columns of table "urls"
-input urls_var_samp_order_by {
-  id: order_by
-}
-
-# aggregate variance on columns
-type urls_variance_fields {
-  id: Float
-}
-
-# order by variance() on columns of table "urls"
-input urls_variance_order_by {
-  id: order_by
-}
-
-query get_urls($limit: Int = 5) {
-  urls(limit: $limit) {
-    id
-    short
-    long
-  }
-}
-
-mutation create_url($long: String!, $short: String!) {
-  insert_urls_one(object: {long: $long, short: $short}) {
-    short
-  }
-}
-
-mutation delete_url($short: String_comparison_exp = {}) {
-  delete_urls(where: {short: $short}) {
-    returning {
-      id
-    }
-  }
-}

@@ -1,0 +1,22 @@
+query GetUrl($limit: Int!, $short: String!) {
+  urls(limit: $limit, where: { short: { _eq: $short } }) {
+    id
+    short
+    long
+  }
+}
+
+mutation CreateUrl($long: String!, $short: String!) {
+  insert_urls_one(object: {long: $long, short: $short}) {
+    short
+  }
+}
+
+mutation DeleteUrl($short: String!) {
+  delete_urls(where: {short: $short}) {
+    returning {
+      id
+    }
+  }
+}
+
